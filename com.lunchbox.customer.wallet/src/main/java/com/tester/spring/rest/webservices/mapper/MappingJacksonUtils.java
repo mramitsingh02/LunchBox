@@ -27,6 +27,7 @@ public class MappingJacksonUtils {
         return mappingJacksonValue;
     }
 
+
     private static FilterProvider getFilterProvider(String filterId, String[] nameOfFilterAttributes) {
         SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept(nameOfFilterAttributes);
         return new SimpleFilterProvider().addFilter(filterId, filter);
