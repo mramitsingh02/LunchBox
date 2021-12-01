@@ -7,6 +7,7 @@ import com.lunchbox.customer.rattingservice.dto.ApplicationRattingDTO;
 import com.lunchbox.customer.rattingservice.dto.CustomerDTO;
 import com.lunchbox.customer.rattingservice.dto.CustomerRattingDTO;
 import com.lunchbox.customer.rattingservice.dto.MerchantIdDTO;
+import com.lunchbox.customer.rattingservice.proxy.CustomerManagementProxy;
 import com.lunchbox.customer.rattingservice.rest.ApplicationRattingResponse;
 import com.lunchbox.customer.rattingservice.rest.MerchantRattingResponse;
 import com.lunchbox.customer.rattingservice.service.RattingService;
@@ -32,7 +33,10 @@ public class RestCustomerRattingController {
     @Autowired
     private RattingService rattingService;
 
-    @GetMapping(path = "/ratting/application")
+    @Autowired
+    private CustomerManagementProxy proxy;
+
+    @GetMapping(path = "/ratting/application", headers = "APP-VERSION=1")
     public List<ApplicationRattingDTO> getApplicationRattings() {
         List<ApplicationRattingDTO> rattingDTO = rattingService.getApplicationRatting();
         for (ApplicationRattingDTO applicationRattingDTO : rattingDTO) {
@@ -43,7 +47,7 @@ public class RestCustomerRattingController {
         return rattingDTO;
     }
 
-    @GetMapping(path = "/ratting/application/statistics", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/ratting/application/statistics", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "APP-VERSION=1")
     public EntityModel<ApplicationRattingResponse> applicationRattingStatistics() {
         List<ApplicationRattingDTO> rattingDTO = rattingService.getApplicationRatting();
 
@@ -57,14 +61,14 @@ public class RestCustomerRattingController {
     }
 
 
-    @GetMapping(path = "/ratting/application/msisdn/{msisdn}")
+    @GetMapping(path = "/ratting/application/msisdn/{msisdn}", headers = "APP-VERSION=1")
     public ApplicationRattingDTO getApplicationRatting(@PathVariable String msisdn) {
         ApplicationRattingDTO customerRattingDTO = rattingService.getApplicationRattingByFromMsisdn(msisdn);
         return customerRattingDTO;
     }
 
 
-    @PostMapping(path = "/ratting/application")
+    @PostMapping(path = "/ratting/application", headers = "APP-VERSION=1")
     public EntityModel<ApplicationRattingDTO> createApplicationRatting(@RequestBody ApplicationRattingDTO applicationRattingDTO) {
         final ApplicationRattingDTO rattingDTO = rattingService.createOrUpdateRatting(applicationRattingDTO);
         Link link = linkTo(methodOn(RestCustomerRattingController.class).getApplicationRatting(rattingDTO.getFromMsisdn())).withSelfRel();
@@ -72,7 +76,7 @@ public class RestCustomerRattingController {
         return EntityModel.of(rattingDTO, link, allRatting);
     }
 
-    @GetMapping(path = "/ratting/customer/all")
+    @GetMapping(path = "/ratting/customer/all", headers = "APP-VERSION=1")
     public CollectionModel<CustomerRattingDTO> allCustomerRatting() {
         List<CustomerRattingDTO> customerRattingDTO = rattingService.getCustomerRatting();
         for (CustomerRattingDTO dto : customerRattingDTO) {
@@ -81,14 +85,14 @@ public class RestCustomerRattingController {
         return CollectionModel.of(customerRattingDTO);
     }
 
-    @GetMapping(path = "/ratting/customer/msisdn/{msisdn}")
+    @GetMapping(path = "/ratting/customer/msisdn/{msisdn}", headers = "APP-VERSION=1")
     public CustomerRattingDTO getCustomerRatting(@PathVariable String msisdn) {
         CustomerRattingDTO customerRattingDTO = rattingService.getCustomerRatting(msisdn);
         return customerRattingDTO;
     }
 
 
-    @GetMapping(path = "/merchant/ratting/msisdn/{msisdn}")
+    @GetMapping(path = "/merchant/ratting/msisdn/{msisdn}", headers = "APP-VERSION=1")
     public MerchantRattingResponse getMerchantRattingResponse(@PathVariable String msisdn) {
         return rattingService.getMerchantRattingByMsisdn(msisdn);
     }
@@ -106,8 +110,8 @@ public class RestCustomerRattingController {
         mappingJacksonValue.setFilters(filters);
     }
 
-    @PostMapping(path = "/ratting/customer")
-    public CustomerRattingDTO createCustomerRatting(@RequestBody CustomerRattingDTO customerRattingDTO) {
+    @PostMapping(path = "/ratting/customer", headers = "APP-VERSION=1")
+    public CustomerRattingDTO createCustomerRattingV1(@RequestBody CustomerRattingDTO customerRattingDTO) {
         String uri = "http://localhost:9090/customer/msisdn/{msisdn}";
 
         RestTemplate restTemplate = new RestTemplate();
@@ -125,6 +129,16 @@ public class RestCustomerRattingController {
         if (toMerchant.hasBody()) {
             customerRattingDTO.setToCustomerId(toMerchant.getBody().getMerchantId());
         }
+        return rattingService.createOrUpdateRatting(customerRattingDTO);
+    }
+
+    @PostMapping(path = "/ratting/customer", headers = "APP-VERSION=2")
+    public CustomerRattingDTO createCustomerRattingV2(@RequestBody CustomerRattingDTO customerRattingDTO) {
+        final CustomerDTO customerDTO = proxy.retrieveCustomerByMsisdn(customerRattingDTO.getFromMsisdn());
+        customerRattingDTO.setFromCustomerId(customerDTO.getCustomerId());
+
+        final MerchantIdDTO merchantIdDTO = proxy.retrieveMerchantByMsisdn(customerRattingDTO.getToMsisdn());
+        customerRattingDTO.setToCustomerId(merchantIdDTO.getMerchantId());
         return rattingService.createOrUpdateRatting(customerRattingDTO);
     }
 

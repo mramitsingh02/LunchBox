@@ -2,12 +2,13 @@ package com.lunchbox.customer.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.time.LocalDate;
 
 @Builder
 @Getter
-public class CustomerDTO {
+public class CustomerDTO extends RepresentationModel<CustomerDTO> {
     private String customerId;
     private String firstName;
     private String lastName;

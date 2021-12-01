@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JpbDataSourceConfig">
+    <data-sources>
+      <data-source id="5af85173-0289-4374-a0c0-7ba3c6cbf7f3" name="lunchbox" url="jdbc:mysql://localhost:3306/lunchbox" driverClass="com.mysql.cj.jdbc.Driver" />
+    </data-sources>
+  </component>
+</project>

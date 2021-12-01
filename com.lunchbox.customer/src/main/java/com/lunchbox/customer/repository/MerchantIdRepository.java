@@ -1,16 +1,16 @@
 package com.lunchbox.customer.repository;
 
-import com.lunchbox.customer.repository.entity.MerchantId;
+import com.lunchbox.customer.repository.entity.Merchant;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface MerchantIdRepository extends JpaRepository<MerchantId, String> {
-    MerchantId findByMsisdn(String msisdn);
+public interface MerchantIdRepository extends JpaRepository<Merchant, String> {
+    Merchant findByMsisdn(String msisdn);
 
-    MerchantId findByMsisdnAndStatus(String msisdn, String status);
+    Merchant findByMsisdnAndStatus(String msisdn, String status);
 
-    List<MerchantId> findByStatus(String status);
+    List<Merchant> findByStatus(String status);
 }

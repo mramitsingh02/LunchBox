@@ -1,7 +1,7 @@
 package com.lunchbox.customer.service.impl;
 
+import com.lunchbox.common.errorfreamwork.exception.CustomerNotFoundException;
 import com.lunchbox.customer.dto.CustomerDTO;
-import com.lunchbox.customer.exception.CustomerNotFoundException;
 import com.lunchbox.customer.repository.CustomerRepository;
 import com.lunchbox.customer.repository.entity.Customer;
 import com.lunchbox.customer.service.CustomerService;
@@ -61,5 +61,10 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerDTO update(CustomerDTO customerDTO) {
         return CustomerMapper.getCustomerDTO(customerRepository.saveAndFlush(CustomerMapper.getCustomer(customerDTO)));
+    }
+
+    @Override
+    public void delete(CustomerDTO customerDTO) {
+        customerRepository.delete((CustomerMapper.getCustomer(customerDTO)));
     }
 }

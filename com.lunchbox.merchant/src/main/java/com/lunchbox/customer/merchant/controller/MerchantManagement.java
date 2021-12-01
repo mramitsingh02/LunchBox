@@ -3,9 +3,6 @@ package com.lunchbox.customer.merchant.controller;
 import com.lunchbox.customer.merchant.dto.MerchantDTO;
 import com.lunchbox.customer.merchant.service.MerchantServices;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 
@@ -76,6 +73,7 @@ public class MerchantManagement {
     }
 */
 
+/*
 
     @PostMapping("/wallet-v1")
     public Resource<MerchantDTO> merchant(@Valid @RequestBody MerchantDTO MerchantDTO) {
@@ -89,6 +87,7 @@ public class MerchantManagement {
         resource.add(linkBuilder);
         return resource;
     }
+*/
 
 
 }

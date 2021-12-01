@@ -19,4 +19,6 @@ public interface CustomerService {
     List<CustomerDTO> findByAddressState(String state);
 
     CustomerDTO update(CustomerDTO customerDTO);
+
+    void delete(CustomerDTO customerDTO);
 }
